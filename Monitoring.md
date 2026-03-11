@@ -110,8 +110,7 @@ expecting a sequence number
 
 The final working solution was to use:
 
-syslog_format = "raw"
-
---stability.level=experimental
+* syslog_format = "raw"
+* --stability.level=experimental
 
 That reliably ingested Cisco router syslog into Loki.
