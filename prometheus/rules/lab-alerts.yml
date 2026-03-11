@@ -1,0 +1,56 @@
+groups:
+  - name: lab-reachability
+    rules:
+      - alert: DNSProbeFailed
+        expr: probe_success{job="blackbox_dns"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DNS probe failed"
+          description: "DNS check failed for {{ $labels.instance }}"
+
+      - alert: ICMPProbeFailed
+        expr: probe_success{job="blackbox_icmp"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ICMP probe failed"
+          description: "ICMP reachability failed for {{ $labels.instance }}"
+
+      - alert: DNSProbeFailed
+        expr: probe_success{job="blackbox_dns"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DNS probe failed"
+          description: "DNS check failed for {{ $labels.instance }}"
+
+      - alert: HTTPProbeFailed
+        expr: probe_success{job="blackbox_http"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP probe failed"
+          description: "HTTP check failed for {{ $labels.instance }}"
+
+      - alert: InterfaceErrorsIncreasing
+        expr: rate(ifInErrors[5m]) > 0 or rate(ifOutErrors[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Interface errors detected"
+          description: "Interface errors are increasing on {{ $labels.instance }} interface index {{ $labels.ifIndex }}"
+      
+      - alert: TCP80ProbeFailed
+        expr: probe_success{job="blackbox_tcp"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "TCP/80 probe failed"
+          description: "TCP connectivity failed for {{ $labels.instance }}"

@@ -1,0 +1,30 @@
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://127.0.0.1:3100/loki/api/v1/push"
+  }
+}
+
+loki.source.syslog "cisco_syslog" {
+  listener {
+    address        = "0.0.0.0:1514"
+    protocol       = "udp"
+    syslog_format  = "raw"
+
+    labels = {
+      job      = "syslog",
+      protocol = "udp",
+      source   = "cml",
+    }
+
+    raw_format_options {
+      use_null_terminator_delimiter = false
+    }
+  }
+
+  forward_to = [loki.write.local.receiver]
+}

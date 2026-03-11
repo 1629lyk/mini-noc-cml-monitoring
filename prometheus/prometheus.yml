@@ -1,0 +1,172 @@
+# my global config
+global:
+  scrape_interval: 30s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - rules/*.yml
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+       # The label name is added as a label `label_name=<label_value>` to any timeseries scraped from this config.
+        labels:
+          app: "prometheus"
+    
+  - job_name: snmp_exporter
+    static_configs:
+      - targets:
+          - 127.0.0.1:9116
+
+  - job_name: blackbox_exporter
+    static_configs:
+      - targets:
+          - 127.0.0.1:9115
+
+  # SNMP polling for routers through snmp_exporter
+  
+  # - job_name: snmp_iosv
+  #   metrics_path: /snmp
+  #   params:
+  #     module: [if_mib]
+  #     auth: [public_v2]
+  #   static_configs:
+  #     - targets:
+  #         - 172.16.255.1 # R1-CORE mgmt-facing IP
+  #         - 10.0.12.2 # R2-BRANCH transit IP
+  #         - 10.0.13.2 # R3-EDGE transit IP
+  #         - 1.1.1.1
+  #         - 2.2.2.2
+  #         - 3.3.3.3
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: 127.0.0.1:9116
+
+  - job_name: snmp_iosv
+    metrics_path: /snmp
+    params:
+      module: [if_mib]
+      auth: [public_v2]
+    static_configs:
+      - targets:
+          - 1.1.1.1
+          - 2.2.2.2
+          - 3.3.3.3
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9116
+
+  # ICMP reachability probes
+  
+  # - job_name: blackbox_icmp
+  #   metrics_path: /probe
+  #   params:
+  #     module: [icmp]
+  #   static_configs:
+  #     - targets:
+  #         - 172.16.255.1
+  #         - 10.20.10.10 # S1-APP
+  #         - 10.20.20.10 # C1-CLIENT if static later; remove if DHCP changes
+  #         - 1.1.1.1
+  #         - 2.2.2.2
+  #         - 3.3.3.3
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: 127.0.0.1:9115
+
+  # - job_name: blackbox_icmp
+  #   metrics_path: /probe
+  #   params:
+  #     module: [icmp]
+  #   static_configs:
+  #     - targets:
+  #         - 10.20.10.10
+  #         - 10.20.20.10
+  #         - 1.1.1.1
+  #         - 2.2.2.2
+  #         - 3.3.3.3
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: 127.0.0.1:9115
+
+  # DNS experience checks
+  - job_name: blackbox_dns
+    metrics_path: /probe
+    params:
+      module: [dns_tcp_lab]
+    static_configs:
+      - targets:
+          - 10.20.10.10:53
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+  
+  # HTTP experience checks
+  - job_name: blackbox_http
+    metrics_path: /probe
+    params:
+      module: [http_2xx_lab]
+    static_configs:
+      - targets:
+          - http://10.20.10.10/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox_tcp
+    metrics_path: /probe
+    params:
+      module: [tcp_80_lab]
+    static_configs:
+      - targets:
+          - 10.20.10.10:80
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
