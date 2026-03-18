@@ -19,9 +19,9 @@ The project monitors:
 
 The working lab uses:
 
-- `R1-CORE` - IOL
-- `R2-BRANCH` - IOL
-- `R3-EDGE` - IOL
+- `R1-CORE` - IOL (Cisco IOS-XE)
+- `R2-BRANCH` - IOL (Cisco IOS-XE)
+- `R3-EDGE` - IOL (Cisco IOS-XE)
 - `S1-SVC` - Alpine Linux
 - `C1-CLIENT` - Alpine Linux
 - `EXT-BRIDGE` - External Connector (**does not count**)
