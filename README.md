@@ -85,7 +85,7 @@ New-NetFirewallRule -DisplayName "Syslog UDP 1514" -Direction Inbound -Protocol 
 
 * **Alloy**
   ```powershell
-  alloy-windows-amd64.exe" run --stability.level=experimental ""path\config.alloy"
+  alloy-windows-amd64.exe run --stability.level=experimental "path\config.alloy"
   ```
 
 * **SNMP Exporter**
